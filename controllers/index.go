@@ -1,10 +1,15 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jellycheng/gosupport"
+	"github.com/jellycheng/gosupport/curl"
+	"github.com/russross/blackfriday/v2"
 	"net/http"
+	"strings"
 	"time"
+	"html/template"
 )
 
 // 健康检查页 /health/index
@@ -46,4 +51,34 @@ func Index(c *gin.Context)  {
 	c.JSON(http.StatusOK, gin.H{"code":0, "msg":"success", "data":new(struct{})})
 }
 
+func HtmlIndex(c *gin.Context)  {
+	mdDir := curl.TrimPath(globalEnv.GetString("MD_DOC_ROOT_PATH"),2) + "/"
+	projectName := "demo"
 
+	leftFile := fmt.Sprintf("%s/%s/SUMMARY.md", mdDir, projectName)
+	leftFileCon,_ := gosupport.FileGetContents(leftFile)
+	leftFileCon = strings.ReplaceAll(leftFileCon, "(docs/", "(?md=")
+	leftContentByte := blackfriday.Run([]byte(leftFileCon))
+	leftContent := string(leftContentByte)
+
+	md := c.Query("md")
+	if md == "" {
+		md = "index"
+	}
+	rightContent := "文档不存在"
+	rightFile := fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, strings.TrimRight(md, ".md"))
+	if gosupport.IsFile(rightFile) {
+		rightFileCon,_ := gosupport.FileGetContents(rightFile)
+		rightContentByte := blackfriday.Run([]byte(rightFileCon))
+		rightContent = string(rightContentByte)
+	}
+
+	c.HTML(200, "layout_default.html", struct {
+		LeftContent template.HTML
+		RightContent template.HTML
+	}{
+		LeftContent: template.HTML(leftContent),
+		RightContent: template.HTML(rightContent),
+	})
+
+}
