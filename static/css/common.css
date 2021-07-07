@@ -1,6 +1,7 @@
 
 *{ margin:0; padding:0;}
 
+
 ul,li{
     list-style:none;
 }
@@ -23,12 +24,35 @@ a{
     visibility: hidden;
 }
 
-
 .md-left {
     float: left;
+    width: 299px;
+    /* height: calc(100% - 100px); */
+    padding: 0 20px;
+    background: #fafafa;
+    border-right: 1px solid rgba(0,0,0,.07);
+    overflow: hidden;
+}
+
+.md-left ul {
+    padding-left: 10px;
+}
+
+.md-left ul li{
+    padding-left: 10px;
+    min-height: 50px;
+    line-height: 50px;
+}
+.md-left ul li a {
+    padding-left:20px;
+}
+
+.md-left ul li p{
+
 }
 
 .markdown-body {
+    padding: 30px;
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     color: #314659;
@@ -86,3 +110,20 @@ pre.prettyprint {
     background-color: #fbfbfb;
 }
 
+.markdown-body p {
+    padding: 10px 20px;
+}
+.markdown-body pre {
+    margin: 10px 0;
+    padding: 10px 20px;
+    background-color: #f8f8f8;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 30px;
+    text-align: center;
+    color: #ccc;
+}
