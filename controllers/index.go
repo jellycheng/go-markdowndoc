@@ -7,6 +7,7 @@ import (
 	"github.com/jellycheng/gosupport/curl"
 	"github.com/russross/blackfriday/v2"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 	"html/template"
@@ -55,8 +56,14 @@ func HtmlIndex(c *gin.Context)  {
 	mdDir := curl.TrimPath(globalEnv.GetString("MD_DOC_ROOT_PATH"),2) + "/"
 	projectName := "demo"
 	pname := c.Query("pname")
-	if pname != "" && gosupport.IsAccountName(pname) {
-		projectName = pname
+	if pname != "" {
+		if isMatch,err := regexp.MatchString("^[a-zA-Z][a-zA-Z0-9_-]*$", pname);err == nil && isMatch {
+			projectName = pname
+		} else {
+			c.String(200, "文档不存在")
+			return
+		}
+
 	}
 
 	leftContent := ""
