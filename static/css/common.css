@@ -40,8 +40,8 @@ a{
 
 .md-left ul li{
     padding-left: 10px;
-    min-height: 50px;
-    line-height: 50px;
+    min-height: 40px;
+    line-height: 40px;
 }
 .md-left ul li a {
     padding-left:20px;
