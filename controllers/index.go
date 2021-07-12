@@ -54,12 +54,16 @@ func Index(c *gin.Context)  {
 func HtmlIndex(c *gin.Context)  {
 	mdDir := curl.TrimPath(globalEnv.GetString("MD_DOC_ROOT_PATH"),2) + "/"
 	projectName := "demo"
+	pname := c.Query("pname")
+	if pname != "" && gosupport.IsAccountName(pname) {
+		projectName = pname
+	}
 
 	leftContent := ""
 	leftFile := fmt.Sprintf("%s/%s/SUMMARY.md", mdDir, projectName)
 	if gosupport.IsFile(leftFile) {
 		leftFileCon, _ := gosupport.FileGetContents(leftFile)
-		leftFileCon = strings.ReplaceAll(leftFileCon, "(docs/", "(?md=")
+		leftFileCon = strings.ReplaceAll(leftFileCon, "(docs/", "(?pname="+projectName+"&md=")
 		leftContentByte := blackfriday.Run([]byte(leftFileCon))
 		leftContent = string(leftContentByte)
 	}
