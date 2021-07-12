@@ -114,6 +114,7 @@ pre.prettyprint {
     padding: 10px 20px;
 }
 .markdown-body pre {
+    overflow:auto;
     margin: 10px 0;
     padding: 10px 20px;
     background-color: #f8f8f8;
