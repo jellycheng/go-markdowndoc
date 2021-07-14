@@ -53,8 +53,8 @@ func Index(c *gin.Context)  {
 }
 
 func HtmlIndex(c *gin.Context)  {
-	mdDir := curl.TrimPath(globalEnv.GetString("MD_DOC_ROOT_PATH"),2) + "/"
-	projectName := "demo"
+	mdDir := curl.TrimPath(globalEnv.GetString("MD_DOC_ROOT_PATH"),2)
+	projectName := ""
 	pname := c.Query("pname")
 	if pname != "" {
 		if isMatch,err := regexp.MatchString("^[a-zA-Z][a-zA-Z0-9_-]*$", pname);err == nil && isMatch {
@@ -63,7 +63,16 @@ func HtmlIndex(c *gin.Context)  {
 			c.String(200, "文档不存在")
 			return
 		}
+	} else { // 大首页
+		bigIndexFile := "./views/index.html"
+		if gosupport.IsFile(bigIndexFile) {
+			c.HTML(200, "index.html", struct {
 
+			}{})
+			return
+		} else {
+			projectName = "demo"
+		}
 	}
 
 	leftContent := ""
@@ -75,12 +84,19 @@ func HtmlIndex(c *gin.Context)  {
 		leftContent = string(leftContentByte)
 	}
 
-	md := c.Query("md")
-	if md == "" {
-		md = "index"
-	}
+	rightFile := ""
 	rightContent := "文档不存在"
-	rightFile := fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, strings.TrimRight(md, ".md"))
+
+	md := c.Query("md")
+	if md == "" {// 查找默认首页
+		rightFile = fmt.Sprintf("%s/%s/%s.md", mdDir, projectName, "README")
+		if !gosupport.IsFile(rightFile) {
+			rightFile = fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, "index")
+		}
+	} else {
+		rightFile = fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, strings.TrimRight(md, ".md"))
+	}
+
 	if gosupport.IsFile(rightFile) {
 		rightFileCon,_ := gosupport.FileGetContents(rightFile)
 		rightContentByte := blackfriday.Run([]byte(rightFileCon))
