@@ -94,7 +94,7 @@ func HtmlIndex(c *gin.Context)  {
 			rightFile = fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, "index")
 		}
 	} else {
-		rightFile = fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, strings.TrimRight(md, ".md"))
+		rightFile = fmt.Sprintf("%s/%s/docs/%s.md", mdDir, projectName, strings.TrimSuffix(md, ".md"))
 	}
 
 	if gosupport.IsFile(rightFile) {
